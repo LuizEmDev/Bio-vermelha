@@ -62,12 +62,12 @@
       font-family: 'Merriweather', serif;
       color: var(--primary);
     }
-    img, .graphic {
+    img {
       width: 100%;
       border-radius: 5px;
       margin: 15px 0;
     }
-    .quiz button {
+    .quiz button, .base, .verificar-btn {
       background: var(--primary);
       color: white;
       border: none;
@@ -76,7 +76,7 @@
       border-radius: 5px;
       cursor: pointer;
     }
-    .quiz button:hover {
+    .quiz button:hover, .base:hover, .verificar-btn:hover {
       background: var(--secondary);
     }
     .feedback {
@@ -116,15 +116,7 @@
       box-shadow: 0 4px 8px rgba(0,0,0,0.3);
     }
     .base {
-      background: var(--primary);
-      color: white;
-      padding: 10px 15px;
-      border-radius: 5px;
-      cursor: grab;
       user-select: none;
-    }
-    .base:hover {
-      background: var(--secondary);
     }
   </style>
 </head>
@@ -149,7 +141,7 @@
 <section id="introducao">
   <h2>Introdução</h2>
   <p>A Biotecnologia Vermelha é o ramo da biotecnologia voltado para a área da saúde humana. Ela envolve o desenvolvimento de novos medicamentos, vacinas, terapias, além de técnicas de diagnóstico avançadas. Seu objetivo é melhorar a qualidade de vida das pessoas e promover tratamentos mais eficazes para diversas doenças.</p>
-  <img src="https://cdn.pixabay.com/photo/2016/11/18/22/05/dna-1833299_960_720.jpg" alt="DNA">
+  <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/e/e4/DNA_chemical_structure.svg/640px-DNA_chemical_structure.svg.png" alt="DNA">
 </section>
 
 <section id="caracteristicas">
@@ -230,7 +222,7 @@
   <div id="target-area" style="display: flex; flex-wrap: wrap; gap: 10px; min-height: 50px; border: 2px dashed var(--primary); padding: 10px; border-radius: 8px;">
     <p style="width: 100%; text-align: center; color: #888;">Solte as bases aqui</p>
   </div>
-  <button onclick="verificarDNA()" style="margin-top:20px;">Verificar Montagem</button>
+  <button class="verificar-btn" onclick="verificarDNA()">Verificar Montagem</button>
   <div id="resultado" style="margin-top:10px; font-weight: bold;"></div>
 </section>
 
@@ -238,9 +230,13 @@
   <h2>Quiz Interativo</h2>
   <p>Teste seus conhecimentos:</p>
   <div class="quiz">
-    <!-- Aqui vai o quiz com as 10 perguntas como no modelo anterior -->
-    <!-- Para economizar espaço nesta resposta, mantenha o mesmo quiz anterior aqui -->
+    <!-- 10 perguntas do quiz -->
+    <!-- Para economizar espaço, coloque as mesmas 10 perguntas que enviei antes -->
   </div>
+  <div class="progress">
+    <div class="progress-bar" id="progress-bar"></div>
+  </div>
+  <div class="score" id="score"></div>
 </section>
 
 <footer>
@@ -250,7 +246,6 @@
 <button id="topo" onclick="scrollToTop()">↑</button>
 
 <script>
-  // Modo noturno automático
   const hora = new Date().getHours();
   if (hora >= 18 || hora <= 6) {
     document.documentElement.setAttribute('data-theme', 'dark');
@@ -260,7 +255,7 @@
     window.scrollTo({ top: 0, behavior: 'smooth' });
   }
 
-  // Experimento de DNA
+  // Experimento DNA
   const bases = document.querySelectorAll('.base');
   const targetArea = document.getElementById('target-area');
 
@@ -286,13 +281,39 @@
     const paresCorretos = ['A','T','C','G','A','T','C','G'];
     const certo = sequencia.length === paresCorretos.length && sequencia.every((b, i) => b === paresCorretos[i]);
     const resultado = document.getElementById('resultado');
-    if (certo) {
-      resultado.textContent = '✅ Parabéns! Você montou corretamente a cadeia de DNA!';
-      resultado.style.color = 'green';
+    resultado.textContent = certo ? '✅ Parabéns! Você montou corretamente a cadeia de DNA!' : '❌ Ops! A cadeia está incorreta. Tente novamente.';
+    resultado.style.color = certo ? 'green' : 'red';
+  }
+
+  // Quiz
+  let score = 0;
+  let answered = 0;
+  const totalQuestions = 10;
+
+  function responder(button, correto) {
+    const feedback = button.parentElement.querySelector('.feedback');
+    if (feedback.textContent) return;
+
+    if (correto) {
+      feedback.textContent = '✅ Correto!';
+      feedback.style.color = 'green';
+      score++;
     } else {
-      resultado.textContent = '❌ Ops! A cadeia está incorreta. Tente novamente.';
-      resultado.style.color = 'red';
+      feedback.textContent = '❌ Errado!';
+      feedback.style.color = 'red';
     }
+
+    answered++;
+    atualizarProgresso();
+
+    if (answered === totalQuestions) {
+      document.getElementById('score').innerHTML = `<strong>Você acertou ${score} de ${totalQuestions} perguntas.</strong>`;
+    }
+  }
+
+  function atualizarProgresso() {
+    const progress = document.getElementById('progress-bar');
+    progress.style.width = (answered / totalQuestions * 100) + '%';
   }
 </script>
 
