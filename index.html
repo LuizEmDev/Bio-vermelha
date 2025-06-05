@@ -306,7 +306,7 @@
 
   function verificarDNA() {
     const sequencia = Array.from(targetArea.querySelectorAll('.base')).map(b => b.textContent);
-    const paresCorretos = ['A','T','C','G','A','T','C','G'];
+    const paresCorretos = ['T','A','G','C','T','C','A','G'];
     const resultado = document.getElementById('resultadoDNA');
     if (sequencia.length !== paresCorretos.length) {
       resultado.textContent = '⚠️ Montagem incompleta.';
